@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config(); // Load environment variables
 const app = express();
 const port = process.env.PORT || 3000;
 const { sequelize } = require('./models'); // Import your Sequelize instance
