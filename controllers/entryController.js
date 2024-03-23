@@ -28,12 +28,12 @@ exports.getAllEntries = async (req, res) => {
 exports.getEntryById = async (req, res) => {
   const { id } = req.params;
   try {
-    const Entry = await Entry.findByPk(id);
-    if (!Entry) {
+    const entry = await Entry.findByPk(id); // Use lowercase 'entry' for the instance
+    if (!entry) {
       res.status(404).json({ message: 'Entry not found' });
       return;
     }
-    res.status(200).json(Entry);
+    res.status(200).json(entry); // Send the found entry instance
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching Entry' });
