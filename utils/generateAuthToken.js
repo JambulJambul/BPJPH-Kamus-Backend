@@ -24,7 +24,6 @@ const generateAdminAuthToken = (admin) => {
 
     // Add any other admin-related data you want to include in the token
   };
-  console.log(payload , 'PAYLOAD ADMIN')
   // Sign the token with the admin secret key and set an expiration time (e.g., 30 minutes)
   const token = jwt.sign(payload, 'ADMIN-SECRET-KEY', { expiresIn: '30m' });
 

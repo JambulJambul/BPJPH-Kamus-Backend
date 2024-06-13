@@ -20,7 +20,6 @@ const config = {
   dialect: "mysql"
 };
 
-console.log(config , 'config now')
 // Ensure the dialect is explicitly set
 if (!config.dialect) {
   throw new Error('Dialect needs to be specified in the environment variables.');
