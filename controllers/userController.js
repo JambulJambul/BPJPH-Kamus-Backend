@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const { userSchema } = require('../helpers/validateAttribute');
+const jwt = require('jsonwebtoken')
 const { comparePasswords, hashPassword } = require('../utils/bcrypt');
 const { generateUserAuthToken } = require('../utils/generateAuthToken');
 
@@ -42,14 +43,9 @@ exports.registerUser = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
-
     const hashedPassword = await hashPassword(password);
-
     const newUser = await User.create({ email, password: hashedPassword });
-
-    const token = generateUserAuthToken(newUser);
-
-    res.status(201).json({ message: 'User registered successfully', token, data: newUser });
+    res.status(201).json({ message: 'User registered successfully', data: newUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -72,7 +68,7 @@ exports.loginUser = async (req, res) => {
     let modifiedUser = {
       id: user.id,
       email: user.email,
-      user_type: 'user'
+      role: user.role
     }
     const token = generateUserAuthToken(modifiedUser);
     res.status(200).json({ message: 'Authentication successful', token });
@@ -144,3 +140,27 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+exports.checkAdmin = async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  console.log(token,"here")
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    const user = await User.findByPk(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.role === '1') {
+      return res.status(200).json({ message: 'You are an admin' });
+    } else {
+      return res.status(403).json({ message: 'You are not an admin' });
+    }
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
