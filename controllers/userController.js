@@ -68,7 +68,8 @@ exports.loginUser = async (req, res) => {
     let modifiedUser = {
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
+      username: user.username
     }
     const token = generateUserAuthToken(modifiedUser);
     res.status(200).json({ message: 'Authentication successful', token });
