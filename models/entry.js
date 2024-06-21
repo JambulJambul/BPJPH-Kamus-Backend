@@ -14,10 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Entry.init({
+    user_id: DataTypes.INTEGER,
     title: DataTypes.STRING,
     content: DataTypes.TEXT,
     references: DataTypes.TEXT,
-    img: DataTypes.STRING
+    img: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'Entry',

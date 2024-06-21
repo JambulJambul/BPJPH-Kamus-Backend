@@ -1,11 +1,16 @@
-const db = require('../models'); // Import your Sequelize models
+const db = require('../models');
 const Entry = db.Entry;
+const { imageUpload } = require('../utils/imageUpload')
 
-// Create a new Entry
 exports.createEntry = async (req, res) => {
   try {
-    const { title , content , references , img } = req.body;
-    const newEntry = await Entry.create({ title , content , references , img });
+    const { title, content, references } = req.body;
+    let img = null;
+    const user_id = req.user?.id
+    if (req.file) {
+      img = await imageUpload(req.file, 'entries');
+    }
+    const newEntry = await Entry.create({ user_id, title, content, references, img });
     res.status(201).json(newEntry);
   } catch (error) {
     console.error(error);
@@ -24,23 +29,21 @@ exports.getAllEntries = async (req, res) => {
 };
 
 
-// Get a single Entry by ID
 exports.getEntryById = async (req, res) => {
   const { id } = req.params;
   try {
-    const entry = await Entry.findByPk(id); // Use lowercase 'entry' for the instance
+    const entry = await Entry.findByPk(id);
     if (!entry) {
       res.status(404).json({ message: 'Entry not found' });
       return;
     }
-    res.status(200).json(entry); // Send the found entry instance
+    res.status(200).json(entry);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching Entry' });
   }
 };
 
-// Update a Entry by ID
 exports.updateEntry = async (req, res) => {
   const { id } = req.params;
   try {
@@ -58,7 +61,6 @@ exports.updateEntry = async (req, res) => {
   }
 };
 
-// Delete a Entry by ID
 exports.deleteEntry = async (req, res) => {
   const { id } = req.params;
   try {

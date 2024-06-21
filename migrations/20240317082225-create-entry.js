@@ -9,6 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      user_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       title: {
         type: Sequelize.STRING
       },
@@ -19,7 +23,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       img: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,

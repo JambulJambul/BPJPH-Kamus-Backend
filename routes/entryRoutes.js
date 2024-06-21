@@ -1,21 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate }  = require('../middleware/authMiddleware'); // Import authenticate middleware
+const { authenticate } = require('../middleware/authMiddleware');
 const entryController = require('../controllers/entryController');
+const { upload } = require('../utils/imageUpload')
 
-// Create a new entry
-router.post('/', authenticate , entryController.createEntry);
+router.post('/', authenticate, upload.single('img'), entryController.createEntry);
 
-// Get all 
 router.get('/', entryController.getAllEntries);
 
-// Get a single entry by ID
 router.get('/:id', entryController.getEntryById);
 
-// Update a entry by ID
-router.put('/:id', authenticate ,entryController.updateEntry);
+router.put('/:id', authenticate, entryController.updateEntry);
 
-// Delete a entry by ID
-router.delete('/:id', authenticate ,entryController.deleteEntry);
+router.delete('/:id', authenticate, entryController.deleteEntry);
 
 module.exports = router;
