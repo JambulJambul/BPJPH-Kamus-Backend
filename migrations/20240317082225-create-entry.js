@@ -14,9 +14,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       content: {
+        allowNull: false,
         type: Sequelize.TEXT
       },
       references: {
@@ -32,7 +34,13 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: ['0', '1','2'],
+        allowNull: false,
+        defaultValue: '0',
+      },
     });
   },
   async down(queryInterface, Sequelize) {

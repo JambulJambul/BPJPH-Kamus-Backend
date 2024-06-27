@@ -1,9 +1,9 @@
 const { User } = require('../models');
-const { userSchema } = require('../helpers/validateAttribute');
+const { userSchema, registrationSchema } = require('../helpers/validateAttribute');
 const jwt = require('jsonwebtoken')
 const { comparePasswords, hashPassword } = require('../utils/bcrypt');
 const { generateUserAuthToken } = require('../utils/generateAuthToken');
-
+const decryptor = require('../utils/decryptor')
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -30,9 +30,9 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.registerUser = async (req, res) => {
-  const { email, password } = req.body;
-
-  const { error } = userSchema.validate({ email, password });
+  const decryptedData = decryptor.decryptObject(req.body);
+  const { email, password, username } = decryptedData;
+  const { error } = registrationSchema.validate({ email, password, username });
 
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
@@ -53,7 +53,8 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const decryptedData = decryptor.decryptObject(req.body);
+  const { email, password } = decryptedData;
 
   try {
     const user = await User.findOne({ where: { email } });

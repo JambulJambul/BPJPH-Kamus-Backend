@@ -14,11 +14,26 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Entry.init({
-    user_id: DataTypes.INTEGER,
-    title: DataTypes.STRING,
-    content: DataTypes.TEXT,
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     references: DataTypes.TEXT,
-    img: DataTypes.TEXT
+    img: DataTypes.TEXT,
+    status: {
+      type: DataTypes.ENUM,
+      values: ['0', '1','2'],
+      allowNull: false,
+      defaultValue: '0',
+    },
   }, {
     sequelize,
     modelName: 'Entry',

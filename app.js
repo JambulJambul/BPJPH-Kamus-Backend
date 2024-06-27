@@ -7,8 +7,6 @@ const port = process.env.PORT || 3000;
 const { sequelize } = require('./models');
 const bodyParser = require('body-parser');
 
-
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/uploads', express.static('uploads'));
