@@ -1,6 +1,7 @@
 const db = require('../models');
 const Entry = db.Entry;
 const { imageUpload } = require('../utils/imageUpload')
+const decryptor = require('../utils/decryptor')
 
 exports.createEntry = async (req, res) => {
   try {
@@ -75,5 +76,33 @@ exports.deleteEntry = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error deleting Entry' });
+  }
+};
+
+exports.setEntryStatus = async (req, res) => {
+  const decryptedData = decryptor.decryptObject(req.body);
+  const { id } = req.params;
+  const { actionType } = decryptedData;
+
+  let newStatus;
+  if (actionType === 'accept') {
+    newStatus = '1'; 
+  } else if (actionType === 'reject') {
+    newStatus = '2'; 
+  } else {
+    return res.status(400).json({ message: 'Invalid actionType' });
+  }
+
+  try {
+    const updatedEntry = await Entry.update({ status: newStatus }, {
+      where: { id },
+    });
+    if (updatedEntry[0] === 0) {
+      return res.status(404).json({ message: 'Entry not found' });
+    }
+    res.status(200).json({ message: 'Entry updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating Entry' });
   }
 };
