@@ -83,15 +83,16 @@ exports.updateEntry = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
     let payload
+    const status = '0'
     if (req.file) {
       try {
         const img = await imageUpload(req.file, 'entries');
-        payload = { title, content, references, img }
+        payload = { title, content, references, img, status }
       } catch (uploadError) {
         return res.status(500).json({ message: 'Error uploading image' });
       }
     } else {
-      payload = { title, content, references }
+      payload = { title, content, references, status }
     }
     const updatedEntry = await Entry.update(payload, {
       where: { id },
