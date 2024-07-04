@@ -10,7 +10,9 @@ router.get('/', entryController.getAllEntries);
 
 router.get('/:id', entryController.getEntryById);
 
-router.put('/:id', authenticate, entryController.updateEntry);
+router.get('/entry/personal', authenticate, entryController.getEntryByUserId);
+
+router.put('/:id', authenticate, upload.single('img'), entryController.updateEntry);
 
 router.put('/status/:id', authenticate, authorizeAdmin, entryController.setEntryStatus);
 

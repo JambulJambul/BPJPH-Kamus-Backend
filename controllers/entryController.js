@@ -2,14 +2,24 @@ const db = require('../models');
 const Entry = db.Entry;
 const { imageUpload } = require('../utils/imageUpload')
 const decryptor = require('../utils/decryptor')
+const { EntrySchema } = require('../helpers/validateAttribute');
 
 exports.createEntry = async (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Please provide image." });
+    }
     const { title, content, references } = req.body;
+    const { error } = EntrySchema.validate({ title, content, references })
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
     let img = null;
     const user_id = req.user?.id
-    if (req.file) {
+    try {
       img = await imageUpload(req.file, 'entries');
+    } catch (uploadError) {
+      return res.status(500).json({ message: 'Error uploading image' });
     }
     const newEntry = await Entry.create({ user_id, title, content, references, img });
     res.status(201).json(newEntry);
@@ -29,7 +39,6 @@ exports.getAllEntries = async (req, res) => {
   }
 };
 
-
 exports.getEntryById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -45,17 +54,49 @@ exports.getEntryById = async (req, res) => {
   }
 };
 
-exports.updateEntry = async (req, res) => {
-  const { id } = req.params;
+exports.getEntryByUserId = async (req, res) => {
+  const user_id = req.user?.id
+
   try {
-    const [updatedRows] = await Entry.update(req.body, {
-      where: { id },
-    });
-    if (updatedRows === 0) {
+    const entry = await Entry.findAll({
+      where: {
+        user_id: user_id,
+      },
+    });;
+    if (!entry) {
       res.status(404).json({ message: 'Entry not found' });
       return;
     }
-    res.status(200).json({ message: 'Entry updated successfully' });
+    res.status(200).json(entry);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching Entry' });
+  }
+};
+
+exports.updateEntry = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { title, content, references } = req.body;
+    const { error } = EntrySchema.validate({ title, content, references })
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+    let payload
+    if (req.file) {
+      try {
+        const img = await imageUpload(req.file, 'entries');
+        payload = { title, content, references, img }
+      } catch (uploadError) {
+        return res.status(500).json({ message: 'Error uploading image' });
+      }
+    } else {
+      payload = { title, content, references }
+    }
+    const updatedEntry = await Entry.update(payload, {
+      where: { id },
+    });
+    res.status(200).json(updatedEntry);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating Entry' });
@@ -86,9 +127,9 @@ exports.setEntryStatus = async (req, res) => {
 
   let newStatus;
   if (actionType === 'accept') {
-    newStatus = '1'; 
+    newStatus = '1';
   } else if (actionType === 'reject') {
-    newStatus = '2'; 
+    newStatus = '2';
   } else {
     return res.status(400).json({ message: 'Invalid actionType' });
   }

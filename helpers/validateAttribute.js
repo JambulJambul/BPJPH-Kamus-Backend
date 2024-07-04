@@ -11,7 +11,15 @@ const registrationSchema = Joi.object({
   username: Joi.string(),
 });
 
+const EntrySchema = Joi.object({
+  title: Joi.string().required(),
+  content: Joi.string().required(),
+  references: Joi.string().required(),
+})
+
+
 module.exports = {
   userSchema,
   registrationSchema,
+  EntrySchema
 };

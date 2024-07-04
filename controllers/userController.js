@@ -44,7 +44,7 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Email already in use' });
     }
     const hashedPassword = await hashPassword(password);
-    const newUser = await User.create({ email, password: hashedPassword });
+    const newUser = await User.create({ email, password: hashedPassword, username });
     res.status(201).json({ message: 'User registered successfully', data: newUser });
   } catch (error) {
     console.error(error);
