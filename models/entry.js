@@ -26,13 +26,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    references: DataTypes.TEXT,
-    img: DataTypes.TEXT,
+    references: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    img: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     status: {
       type: DataTypes.ENUM,
-      values: ['0', '1','2'],
+      values: ['0', '1', '2'],
       allowNull: false,
       defaultValue: '0',
+    },
+    comment: {
+      type: DataTypes.TEXT,
     },
   }, {
     sequelize,

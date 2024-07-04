@@ -22,9 +22,20 @@ module.exports = {
         type: Sequelize.TEXT
       },
       references: {
+        allowNull: false,
         type: Sequelize.TEXT
       },
       img: {
+        allowNull: false,
+        type: Sequelize.TEXT
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: ['0', '1','2'],
+        allowNull: false,
+        defaultValue: '0',
+      },
+      comment: {
         type: Sequelize.TEXT
       },
       createdAt: {
@@ -34,12 +45,6 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      status: {
-        type: Sequelize.ENUM,
-        values: ['0', '1','2'],
-        allowNull: false,
-        defaultValue: '0',
       },
     });
   },

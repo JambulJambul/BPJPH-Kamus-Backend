@@ -96,7 +96,9 @@ exports.updateEntry = async (req, res) => {
     const updatedEntry = await Entry.update(payload, {
       where: { id },
     });
-    res.status(200).json(updatedEntry);
+    if (updatedEntry){
+      res.status(200).json({ message: 'Entry updated successfully' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating Entry' });
@@ -123,25 +125,26 @@ exports.deleteEntry = async (req, res) => {
 exports.setEntryStatus = async (req, res) => {
   const decryptedData = decryptor.decryptObject(req.body);
   const { id } = req.params;
-  const { actionType } = decryptedData;
+  const { actionType, comment } = decryptedData;
 
-  let newStatus;
+  let data = {};
   if (actionType === 'accept') {
-    newStatus = '1';
+    data.status = '1';
+    data.comment = null;
   } else if (actionType === 'reject') {
-    newStatus = '2';
+    data.status = '2';
+    data.comment = comment;
   } else {
-    return res.status(400).json({ message: 'Invalid actionType' });
+    return res.status(400).json({ message: 'Invalid payload' });
   }
 
   try {
-    const updatedEntry = await Entry.update({ status: newStatus }, {
+    const updatedEntry = await Entry.update(data, {
       where: { id },
     });
-    if (updatedEntry[0] === 0) {
-      return res.status(404).json({ message: 'Entry not found' });
+    if (updatedEntry) {
+      res.status(200).json({ message: 'Entry status updated successfully' });
     }
-    res.status(200).json({ message: 'Entry updated successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating Entry' });
