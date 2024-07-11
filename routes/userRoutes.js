@@ -12,6 +12,7 @@ router.post('/check-token', userController.checkToken);
 router.get('/', authenticate, authorizeAdmin, userController.getAllUsers);
 router.get('/count', authenticate, authorizeAdmin, userController.getUserCount);
 router.put('/:id', authenticate, userController.updateUser);
+router.put('/change-role/:id', authenticate, authorizeAdmin, userController.changeUserRole);
 router.delete('/:id', userController.deleteUser);
 // router.get('/:id', authenticate, authorizeAdmin, userController.getUserById);
 // router.put('/forgotPassword/:email', userController.forgotPassword);

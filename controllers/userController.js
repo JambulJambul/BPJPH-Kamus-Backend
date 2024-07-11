@@ -114,6 +114,23 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+exports.changeUserRole = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const decryptedData = decryptor.decryptObject(req.body);
+    const { role } = decryptedData;
+    const updatedUser = await User.update({ role }, {
+      where: { id },
+    });
+    if (updatedUser) {
+      res.status(200).json({ message: 'Entry updated successfully' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating Entry' });
+  }
+}
+
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
 
