@@ -15,6 +15,16 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.getUserCount = async (req, res) => {
+  try {
+    const countTotalUser = await User.count();
+    res.status(200).json({ countTotalUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error getting Entry count' });
+  }
+}
+
 exports.getUserById = async (req, res) => {
   const { id } = req.params;
   try {

@@ -8,6 +8,8 @@ router.post('/', authenticate, upload.single('img'), entryController.createEntry
 
 router.get('/', entryController.getAllEntries);
 
+router.get('/count', authenticate, authorizeAdmin, entryController.getEntryCount);
+
 router.get('/:id', entryController.getEntryById);
 
 router.get('/entry/personal', authenticate, entryController.getEntryByUserId);

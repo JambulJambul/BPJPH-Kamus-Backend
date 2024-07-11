@@ -29,6 +29,22 @@ exports.createEntry = async (req, res) => {
   }
 };
 
+exports.getEntryCount = async (req, res) => {
+  try {
+    const countTotalArticle = await Entry.count();
+    const countToBeReviewed = await Entry.count({
+      where: {
+        status: '0'
+      }
+    });
+    const count = { countTotalArticle, countToBeReviewed }
+    res.status(200).json(count);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error getting Entry count' });
+  }
+}
+
 exports.getAllEntries = async (req, res) => {
   try {
     const entries = await Entry.findAll();
@@ -97,7 +113,7 @@ exports.updateEntry = async (req, res) => {
     const updatedEntry = await Entry.update(payload, {
       where: { id },
     });
-    if (updatedEntry){
+    if (updatedEntry) {
       res.status(200).json({ message: 'Entry updated successfully' });
     }
   } catch (error) {
